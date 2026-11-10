@@ -1,4 +1,4 @@
-
+from src.rag.contradiction import detect_contradictions
 from pathlib import Path
 import json
 import os
@@ -711,6 +711,78 @@ RÉPONSE :
         # ----------------------------------------------------
 
         selected_docs = self.expand_context(docs)
+
+
+        # ----------------------------------------------------
+        # DÉTECTION DES CONTRADICTIONS DOCUMENTAIRES
+        # ----------------------------------------------------
+
+        conflict = detect_contradictions(
+            question,
+            selected_docs
+        )
+
+        if conflict["has_conflict"]:
+
+            response = self.refusal_response(
+                retrieval_s=retrieval_s
+            )
+
+            response["refusal_category"] = (
+                "document_conflict"
+            )
+
+            response["conflict_detected"] = True
+            response["evidence"] = conflict["evidence"]
+
+            # Regrouper les sources contradictoires
+            unique_sources = {
+                item["source"]: item
+                for item in conflict["evidence"]
+            }
+
+            response["sources"] = []
+
+            for source_id, item in unique_sources.items():
+
+                score = next(
+                    (
+                        doc.get("score")
+                        for doc in docs
+                        if doc["source"] == source_id
+                    ),
+                    None
+                )
+
+                context_chunk_ids = sorted({
+                    int(doc["chunk_id"])
+                    for doc in selected_docs
+                    if doc["source"] == source_id
+                })
+
+                response["sources"].append({
+                    "source": source_id,
+                    "chunk_id": item["chunk_id"],
+                    "score": score,
+                    "context_chunk_ids": context_chunk_ids
+                })
+
+            citations = ", ".join(
+                f"[{source_id}]"
+                for source_id in unique_sources
+            )
+
+            response["answer"] = (
+                conflict["message"]
+                + "\n\nSources : "
+                + citations
+            )
+
+            response["citations_present"] = True
+
+            # Ne pas appeler Gemini en cas de conflit
+            return response
+
 
         # ----------------------------------------------------
         # 6. CONSTRUIRE LE PROMPT
