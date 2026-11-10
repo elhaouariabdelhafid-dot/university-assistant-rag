@@ -1,0 +1,6 @@
+chunk_size_words: 180
+chunk_overlap_words: 35
+top_k: 5
+min_relevance_score: 0.25
+embedding_model: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+ollama_model: "qwen2.5:3b"

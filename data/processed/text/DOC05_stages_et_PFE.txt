@@ -1,0 +1,69 @@
+# GUIDE DES STAGES ET DU PROJET DE FIN D'ÉTUDES (PFE)
+Université Al Amal – Document de test
+
+## 1. Objectif du stage
+
+Le stage permet à l'étudiant de mettre en pratique les connaissances acquises pendant sa formation et de découvrir le fonctionnement d'une organisation professionnelle.
+
+Les stages peuvent être réalisés dans :
+- Une entreprise privée.
+- Un établissement public.
+- Un laboratoire de recherche.
+- Une organisation ou association disposant de missions adaptées.
+
+## 2. Convention de stage
+
+Avant le début du stage, l'étudiant doit obtenir une convention validée par l'établissement.
+
+La demande de convention comprend généralement :
+- Informations sur l'étudiant.
+- Informations sur l'organisme d'accueil.
+- Sujet du stage.
+- Dates de début et de fin.
+- Coordonnées du tuteur professionnel.
+
+## 3. Projet de fin d'études
+
+Le PFE est un projet académique réalisé en fin de formation.
+
+Il comprend généralement :
+- Identification d'une problématique.
+- Étude bibliographique.
+- Analyse des besoins.
+- Conception de la solution.
+- Développement et expérimentation.
+- Tests et validation.
+- Rédaction d'un rapport.
+- Préparation d'une soutenance.
+
+## 4. Encadrement
+
+Chaque étudiant est suivi par un encadrant académique.
+
+L'organisme d'accueil peut également désigner un tuteur professionnel.
+
+## 5. Rapport de stage
+
+Le rapport doit présenter :
+1. Le contexte de l'organisme d'accueil.
+2. La problématique.
+3. Les objectifs.
+4. L'état de l'art.
+5. La méthodologie.
+6. L'architecture proposée.
+7. La réalisation technique.
+8. Les résultats.
+9. Les limites et perspectives.
+
+## 6. Soutenance
+
+La soutenance permet à l'étudiant de présenter son travail devant un jury.
+
+Le jury évalue la qualité technique, la démarche scientifique, les résultats et la capacité de communication.
+
+## 7. Contact
+
+Service des stages :
+Email : stages@universite-alamal.example
+
+Note : guide fictif conçu pour les tests du système RAG.

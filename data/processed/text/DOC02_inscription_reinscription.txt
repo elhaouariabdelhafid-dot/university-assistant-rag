@@ -1,0 +1,50 @@
+# PROCÉDURES D'INSCRIPTION ET DE RÉINSCRIPTION
+
+Université Al Amal – Document de test
+
+## 1. Première inscription
+
+Les nouveaux étudiants doivent compléter leur inscription administrative avant le début des cours.
+
+Les documents demandés sont :
+- Copie de la carte nationale d'identité.
+- Copie du baccalauréat.
+- Relevé de notes du baccalauréat.
+- Deux photographies d'identité.
+- Formulaire d'inscription signé.
+- Reçu de paiement des frais administratifs, lorsque ceux-ci sont applicables.
+
+Le dossier doit être déposé auprès du service de scolarité de l'établissement concerné.
+
+## 2. Réinscription
+
+Les étudiants déjà inscrits doivent effectuer une réinscription au début de chaque année universitaire.
+
+La procédure comprend :
+1. Accéder à la plateforme universitaire.
+2. S'authentifier avec son compte étudiant.
+3. Vérifier les informations personnelles.
+4. Mettre à jour les informations si nécessaire.
+5. Choisir le niveau d'études.
+6. Valider la demande de réinscription.
+7. Télécharger le reçu de confirmation.
+
+## 3. Retard d'inscription
+
+Un étudiant qui ne respecte pas le délai d'inscription doit contacter le service de scolarité.
+
+Une demande exceptionnelle peut être examinée par l'administration selon les règles internes de l'établissement.
+
+## 4. Perte du compte étudiant
+
+En cas de perte du mot de passe, l'étudiant doit utiliser la procédure officielle de récupération du compte ou contacter le support informatique.
+
+Il ne doit jamais communiquer son mot de passe à une autre personne.
+
+## 5. Contact
+
+Service de scolarité :
+Email : scolarite@universite-alamal.example
+Horaires : lundi au vendredi, de 09h00 à 16h00.
+
+Note : les procédures et coordonnées sont fictives et ne représentent aucune université réelle.

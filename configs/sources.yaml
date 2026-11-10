@@ -1,0 +1,47 @@
+institution: "ENSA Fès"
+sources:
+  - id: DOC01_inscription_2025
+    type: pdf
+    url: "https://docs.ensaf.ac.ma/home/dossier__insc_def_cp.pdf"
+    category: inscription
+    status: archived
+    language: fr
+    note: "Dossier 2025/2026 ; archive, ne pas traiter comme procédure actuelle."
+  - id: DOC02_examens
+    type: pdf
+    url: "https://ensaf.ac.ma/docs/der_exam.pdf"
+    category: examens
+    status: unknown
+    language: fr
+    note: "Date à vérifier dans le document."
+  - id: DOC03_integration_2023
+    type: pdf
+    url: "https://ensaf.ac.ma/vie-etudiante/clubs/docs/ji2023.pdf"
+    category: vie_etudiante
+    status: archived
+    language: fr
+    note: "Archive 2023 ; utile surtout pour tester l'extraction."
+  - id: DOC04_programme_info
+    type: html
+    url: "https://ensaf.ac.ma/fil-info.php"
+    category: formation
+    status: unknown
+    language: fr
+  - id: DOC05_programme_ia
+    type: html
+    url: "https://ensaf.ac.ma/fil-ilia.php"
+    category: formation
+    status: unknown
+    language: fr
+  - id: DOC06_reglements_usmba
+    type: html
+    url: "https://www.usmba.ac.ma/~usmba2/new/reglements/"
+    category: reglement
+    status: unknown
+    language: fr
+  - id: DOC07_charte_usmba
+    type: html
+    url: "https://www.usmba.ac.ma/~usmba2/new/a-propos/gouvernance/politiques-et-procedures/charte-universitaire/"
+    category: gouvernance
+    status: unknown
+    language: fr

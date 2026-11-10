@@ -1,0 +1,36 @@
+# UNIVERSITÉ AL AMAL
+## Présentation générale
+
+L'Université Al Amal est un établissement universitaire fictif créé pour les besoins d'un projet académique de traitement automatique du langage naturel et de recherche documentaire.
+
+L'université comprend cinq facultés et écoles :
+- Faculté des Sciences et Techniques (FST).
+- Faculté des Sciences Juridiques, Économiques et Sociales (FSJES).
+- Faculté des Lettres et Sciences Humaines (FLSH).
+- École Nationale des Sciences Appliquées (ENSA).
+- Faculté de Médecine et de Pharmacie (FMP).
+
+## Organisation académique
+
+L'année universitaire est organisée en deux semestres :
+- Semestre d'automne : septembre à janvier.
+- Semestre de printemps : février à juin.
+
+Chaque semestre comprend des enseignements, des travaux dirigés, des travaux pratiques et des évaluations.
+
+## Services universitaires
+
+L'université propose les services suivants :
+- Service des affaires estudiantines.
+- Service de scolarité.
+- Bibliothèque universitaire.
+- Service des stages et de l'insertion professionnelle.
+- Centre des systèmes d'information.
+- Service des bourses et du logement.
+
+## Contact
+
+Adresse fictive : Avenue de l'Université, Ville Al Amal.
+Email : contact@universite-alamal.example
+
+Note : toutes les informations de ce document sont fictives et servent uniquement à tester un système RAG.

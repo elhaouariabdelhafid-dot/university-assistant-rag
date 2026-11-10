@@ -1,0 +1,9 @@
+{
+  "name": "University Assistant RAG – MLOps",
+  "institution_reference": "ENSA Fès",
+  "platform": "Ubuntu/Linux",
+  "llm": "Ollama qwen2.5:3b",
+  "vector_index": "FAISS CPU",
+  "embedding": "paraphrase-multilingual-MiniLM-L12-v2",
+  "note": "Prototype académique ; documents institutionnels à collecter et valider localement."
+}

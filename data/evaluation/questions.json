@@ -1,0 +1,14 @@
+[
+  {
+    "question": "Quelles sont les consignes relatives aux examens ?",
+    "expected_sources": [
+      "DOC02_examens"
+    ]
+  },
+  {
+    "question": "Quels modules sont proposés dans la filière informatique ?",
+    "expected_sources": [
+      "DOC04_programme_info"
+    ]
+  }
+]
