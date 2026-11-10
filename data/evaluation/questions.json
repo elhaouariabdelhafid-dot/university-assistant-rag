@@ -1,14 +1,34 @@
 [
   {
-    "question": "Quelles sont les consignes relatives aux examens ?",
-    "expected_sources": [
-      "DOC02_examens"
-    ]
+    "question": "Quels documents faut-il pour une première inscription ?",
+    "expected_sources": ["DOC02_inscription_reinscription"]
   },
   {
-    "question": "Quels modules sont proposés dans la filière informatique ?",
-    "expected_sources": [
-      "DOC04_programme_info"
-    ]
+    "question": "Combien de temps avant l'examen faut-il arriver ?",
+    "expected_sources": ["DOC03_reglement_examens"]
+  },
+  {
+    "question": "Quel est le délai pour justifier une absence ?",
+    "expected_sources": ["DOC04_absences_et_justifications"]
+  },
+  {
+    "question": "Quelles sont les étapes du PFE ?",
+    "expected_sources": ["DOC05_stages_et_PFE"]
+  },
+  {
+    "question": "Combien de semestres dure une Licence ?",
+    "expected_sources": ["DOC06_programmes_formations"]
+  },
+  {
+    "question": "Quels langages sont étudiés en informatique ?",
+    "expected_sources": ["DOC06_programmes_formations"]
+  },
+  {
+    "question": "Quand commence le deuxième semestre ?",
+    "expected_sources": ["DOC07_calendrier_universitaire"]
+  },
+  {
+    "question": "Comment obtenir une attestation de scolarité ?",
+    "expected_sources": ["DOC08_frais_procedures"]
   }
 ]

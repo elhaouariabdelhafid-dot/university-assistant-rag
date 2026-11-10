@@ -1,29 +1,33 @@
-# Environnement Python
+
+# Python
 .venv/
 __pycache__/
-.pytest_cache/
 *.pyc
+.pytest_cache/
 
-# Variables sensibles
+# Clés API et secrets
 .env
+.env.*
+!.env.example
 
 # MLflow
-.mlflow/
+mlflow.db
+mlflow.db-*
 mlruns/
+mlartifacts/
 
-# Données brutes : ignorées
-data/raw/*
-!data/raw/.gitkeep
+# Résultats générés automatiquement
+data/evaluation/generation_results.json
+data/evaluation/generation_improved_results.json
+data/evaluation/generation_improved_progress.json
+data/evaluation/llm_comparison_results.json
+data/evaluation/llm_comparison_results.csv
+data/evaluation/results.json
+data/evaluation/quality_results.json
 
-# Données traitées : conserver les documents TXT
-data/processed/*
-!data/processed/
-data/processed/*
-!data/processed/text/
-data/processed/text/*
-!data/processed/text/*.txt
-!data/processed/.gitkeep
+# Artefacts FAISS
+artifacts/*.faiss
+artifacts/chunks.json
 
-# Artefacts générés
-artifacts/*
-!artifacts/.gitkeep
+# Logs
+*.log

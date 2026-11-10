@@ -1,0 +1,64 @@
+DOCUMENT : CALENDRIER UNIVERSITAIRE
+
+UNIVERSITE : Université Al Amal
+ANNEE UNIVERSITAIRE : 2026-2027
+TYPE : Organisation académique
+
+1. ORGANISATION DE L'ANNEE UNIVERSITAIRE
+
+L'année universitaire 2026-2027 est organisée en deux semestres.
+
+Le premier semestre commence en septembre et se termine en janvier.
+
+Le deuxième semestre commence en février et se termine en juin.
+
+Les dates exactes peuvent varier selon les établissements et les filières.
+
+2. PREMIER SEMESTRE
+
+Le premier semestre comprend les activités suivantes :
+
+- Accueil et orientation des nouveaux étudiants.
+- Début des cours magistraux.
+- Séances de travaux dirigés.
+- Séances de travaux pratiques.
+- Contrôles continus.
+- Examens de fin de semestre.
+- Publication des résultats.
+
+3. DEUXIEME SEMESTRE
+
+Le deuxième semestre comprend :
+
+- Reprise des enseignements.
+- Réalisation des projets pédagogiques.
+- Contrôles continus.
+- Examens de fin de semestre.
+- Délibérations.
+- Publication des résultats définitifs.
+
+4. VACANCES UNIVERSITAIRES
+
+Les vacances universitaires peuvent comprendre les vacances d'hiver, les vacances de printemps et les jours fériés officiels.
+
+Les dates sont communiquées par l'administration universitaire.
+
+5. INSCRIPTIONS PEDAGOGIQUES
+
+Les étudiants doivent respecter les délais d'inscription pédagogique annoncés par leur établissement.
+
+L'inscription pédagogique permet de sélectionner ou de confirmer les modules à suivre durant le semestre.
+
+6. EXAMENS ET DELIBERATIONS
+
+Les examens sont organisés à la fin de chaque semestre.
+
+Après les examens, les équipes pédagogiques procèdent aux corrections et aux délibérations.
+
+Les résultats sont ensuite publiés sur les plateformes universitaires ou affichés par les services concernés.
+
+7. CONSEIL AUX ETUDIANTS
+
+Les étudiants doivent consulter régulièrement les annonces officielles pour connaître les changements de calendrier, les dates des examens et les périodes d'inscription.
+
+NOTE : Les informations de ce document sont fictives et servent uniquement aux tests du système RAG.
