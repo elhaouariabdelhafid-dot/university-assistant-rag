@@ -1,0 +1,4 @@
+PROCÉDURE DES ABSENCES — Document de test B
+
+Un étudiant absent doit déposer son justificatif dans un délai maximal
+de 48 heures après la reprise des cours.
