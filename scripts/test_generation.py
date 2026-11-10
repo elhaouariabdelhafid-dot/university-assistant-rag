@@ -4,6 +4,10 @@ import time
 from src.rag.pipeline import UniversityRAG
 
 
+# ============================================================
+# QUESTIONS DE TEST
+# ============================================================
+
 TEST_CASES = [
     {
         "question": "Quels documents faut-il pour une première inscription ?",
@@ -14,6 +18,11 @@ TEST_CASES = [
         "question": "Comment se déroule la réinscription des étudiants ?",
         "expected_refused": False,
         "expected_source": "DOC02_inscription_reinscription"
+    },
+    {
+        "question": "Comment obtenir une attestation de scolarité ?",
+        "expected_refused": False,
+        "expected_source": "DOC08_frais_procedures"
     },
     {
         "question": "Quel est le salaire du président de l'Université Al Amal ?",
@@ -27,6 +36,10 @@ TEST_CASES = [
     }
 ]
 
+
+# ============================================================
+# ÉVALUATION DU PIPELINE RAG
+# ============================================================
 
 def main():
 
@@ -44,7 +57,9 @@ def main():
         question = test["question"]
 
         start = time.perf_counter()
+
         result = rag.answer(question)
+
         elapsed = time.perf_counter() - start
 
         actual_sources = [
@@ -52,17 +67,18 @@ def main():
             for source in result["sources"]
         ]
 
+        # Vérification du refus
         refusal_ok = (
             result["refused"] == test["expected_refused"]
         )
 
+        # Vérification des sources
         expected_source = test["expected_source"]
 
-        source_ok = (
-            expected_source in actual_sources
-            if expected_source
-            else len(actual_sources) == 0
-        )
+        if expected_source is not None:
+            source_ok = expected_source in actual_sources
+        else:
+            source_ok = len(actual_sources) == 0
 
         success = refusal_ok and source_ok
 
@@ -71,8 +87,10 @@ def main():
 
         latencies.append(elapsed)
 
+        # Affichage
         print("\n" + "=" * 70)
-        print(f"TEST {i} : {question}")
+        print(f"TEST {i}/{len(TEST_CASES)}")
+        print("QUESTION :", question)
 
         print("\nRÉPONSE :")
         print(result["answer"])
@@ -82,23 +100,24 @@ def main():
         print("SOURCES :", actual_sources)
 
         print(
-            f"RETRIEVAL : "
-            f"{result['retrieval_s']:.3f} s"
+            f"RETRIEVAL : {result['retrieval_s']:.3f} s"
         )
 
         print(
-            f"GÉNÉRATION : "
-            f"{result['latency_s']:.3f} s"
+            f"GÉNÉRATION : {result['latency_s']:.3f} s"
         )
 
         print(
-            f"TEMPS TOTAL : "
-            f"{result['total_latency_s']:.3f} s"
+            f"TEMPS TOTAL : {result['total_latency_s']:.3f} s"
         )
 
         print(
             "STATUT :", "PASS" if success else "FAIL"
         )
+
+    # ========================================================
+    # RÉSULTATS FINAUX
+    # ========================================================
 
     print("\n" + "=" * 70)
     print("RÉSULTATS FINAUX")
@@ -116,9 +135,6 @@ def main():
         print("VALIDATION FONCTIONNELLE RÉUSSIE")
     else:
         print("CERTAINS TESTS ONT ÉCHOUÉ")
-
-    # Statut de sortie pour CI/CD
-    if passed != len(TEST_CASES):
         raise SystemExit(1)
 
 
