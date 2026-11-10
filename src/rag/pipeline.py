@@ -12,6 +12,9 @@ from sentence_transformers import SentenceTransformer
 from google import genai
 from google.genai import types
 
+# Politique de périmètre métier
+from src.rag.scope_policy import check_scope
+
 
 # ============================================================
 # CONFIGURATION
@@ -41,8 +44,10 @@ LLM_PROVIDER = os.getenv(
 ).lower()
 
 ENABLE_QWEN_FALLBACK = (
-    os.getenv("ENABLE_QWEN_FALLBACK", "false").lower()
-    == "true"
+    os.getenv(
+        "ENABLE_QWEN_FALLBACK",
+        "false"
+    ).lower() == "true"
 )
 
 TOP_K = int(os.getenv("TOP_K", "5"))
@@ -59,7 +64,9 @@ MAX_OUTPUT_TOKENS = int(
     os.getenv("MAX_OUTPUT_TOKENS", "300")
 )
 
-NUM_CTX = int(os.getenv("NUM_CTX", "4096"))
+NUM_CTX = int(
+    os.getenv("NUM_CTX", "4096")
+)
 
 REFUSAL_MESSAGE = (
     "Je ne trouve pas cette information "
@@ -79,7 +86,7 @@ class UniversityRAG:
         chunks_path = ARTIFACTS / "chunks.json"
 
         # ----------------------------------------------------
-        # 1. Vérification des fichiers
+        # 1. Vérifier les artefacts
         # ----------------------------------------------------
 
         if not index_path.exists() or not chunks_path.exists():
@@ -89,7 +96,7 @@ class UniversityRAG:
             )
 
         # ----------------------------------------------------
-        # 2. Chargement de FAISS
+        # 2. Charger l'index FAISS
         # ----------------------------------------------------
 
         self.index = faiss.read_index(
@@ -97,11 +104,13 @@ class UniversityRAG:
         )
 
         # ----------------------------------------------------
-        # 3. Chargement des chunks
+        # 3. Charger les chunks
         # ----------------------------------------------------
 
         self.chunks = json.loads(
-            chunks_path.read_text(encoding="utf-8")
+            chunks_path.read_text(
+                encoding="utf-8"
+            )
         )
 
         if self.index.ntotal != len(self.chunks):
@@ -110,14 +119,17 @@ class UniversityRAG:
                 "et le fichier chunks.json."
             )
 
-        # Index rapide pour retrouver les chunks voisins
+        # Recherche rapide des chunks voisins
         self.chunk_lookup = {
-            (chunk["source"], int(chunk["chunk_id"])): chunk
+            (
+                chunk["source"],
+                int(chunk["chunk_id"])
+            ): chunk
             for chunk in self.chunks
         }
 
         # ----------------------------------------------------
-        # 4. Chargement du modèle d'embeddings
+        # 4. Charger le modèle d'embeddings
         # ----------------------------------------------------
 
         self.embedder = SentenceTransformer(
@@ -125,14 +137,18 @@ class UniversityRAG:
             device="cpu"
         )
 
-        # Client Gemini initialisé à la première utilisation
+        # Client Gemini initialisé au premier appel
         self.gemini_client = None
 
         print("[RAG] Index FAISS chargé")
-        print(f"[RAG] Nombre de chunks : {len(self.chunks)}")
+        print(
+            f"[RAG] Nombre de chunks : "
+            f"{len(self.chunks)}"
+        )
         print(f"[RAG] Embeddings : {EMBEDDING_MODEL}")
         print(f"[RAG] Fournisseur : {LLM_PROVIDER}")
         print("[RAG] Expansion contextuelle activée")
+        print("[RAG] Politique de périmètre activée")
 
     # ========================================================
     # NORMALISATION DU TEXTE
@@ -148,7 +164,7 @@ class UniversityRAG:
         ).strip().casefold()
 
     # ========================================================
-    # RÉPONSE DE REFUS
+    # CONSTRUCTION D'UNE RÉPONSE DE REFUS
     # ========================================================
 
     @staticmethod
@@ -165,13 +181,32 @@ class UniversityRAG:
             "evidence": "",
             "latency_s": generation_s,
             "retrieval_s": retrieval_s,
-            "total_latency_s": retrieval_s + generation_s,
+            "total_latency_s": (
+                retrieval_s + generation_s
+            ),
             "model": model,
             "citations_present": False
         }
 
     # ========================================================
-    # 1. RECHERCHE SÉMANTIQUE FAISS
+    # 1. CONTRÔLE DU PÉRIMÈTRE MÉTIER
+    # ========================================================
+
+    def validate_scope(self, question):
+
+        """
+        Vérifie si la question est autorisée.
+
+        Le contrôle est effectué avant FAISS et Gemini.
+
+        Une question autorisée n'est pas nécessairement
+        présente dans les documents.
+        """
+
+        return check_scope(question)
+
+    # ========================================================
+    # 2. RECHERCHE SÉMANTIQUE FAISS
     # ========================================================
 
     def retrieve(self, question):
@@ -182,13 +217,13 @@ class UniversityRAG:
         if not question.strip():
             return []
 
-        # Transformer la question en vecteur
+        # Transformer la question en embedding
         vector = self.embedder.encode(
             [question],
             normalize_embeddings=True
         )
 
-        # Rechercher les passages pertinents
+        # Rechercher les passages les plus similaires
         scores, ids = self.index.search(
             vector.astype("float32"),
             TOP_K
@@ -196,7 +231,10 @@ class UniversityRAG:
 
         results = []
 
-        for score, idx in zip(scores[0], ids[0]):
+        for score, idx in zip(
+            scores[0],
+            ids[0]
+        ):
 
             if idx < 0:
                 continue
@@ -210,33 +248,26 @@ class UniversityRAG:
         return results
 
     # ========================================================
-    # 2. EXPANSION CONTEXTUELLE DES CHUNKS
+    # 3. EXPANSION CONTEXTUELLE
     # ========================================================
 
     def expand_context(self, docs):
 
         """
-        Améliore le contexte transmis au LLM.
+        Conserve les meilleurs résultats FAISS.
 
-        Principe :
-        - Conserver les 3 meilleurs passages FAISS.
-        - Ajouter les chunks voisins (-1 et +1)
-          des 2 premiers passages.
-        - Éviter les doublons.
-        - Conserver l'ordre des chunks par document.
+        Ajoute les chunks voisins (-1 et +1)
+        des deux meilleurs passages.
 
-        Exemple :
-        FAISS retrouve DOC08 chunk 1.
-        Le contexte peut également inclure
-        DOC08 chunk 0 et DOC08 chunk 2.
+        Évite les doublons et conserve
+        l'ordre des chunks par document.
         """
 
         selected = []
-
         seen = set()
 
         # ----------------------------------------------------
-        # 1. Conserver les meilleurs résultats FAISS
+        # A. Sélection initiale FAISS
         # ----------------------------------------------------
 
         for doc in docs[:GENERATION_TOP_K]:
@@ -250,22 +281,24 @@ class UniversityRAG:
                 continue
 
             item = doc.copy()
+
             item["retrieval_type"] = "faiss"
 
             selected.append(item)
             seen.add(key)
 
-        # Mémoriser l'ordre des documents
+        # Mémoriser l'ordre des sources
         source_order = {}
 
         for doc in selected:
+
             source_order.setdefault(
                 doc["source"],
                 len(source_order)
             )
 
         # ----------------------------------------------------
-        # 2. Ajouter les chunks voisins
+        # B. Ajouter les chunks voisins
         # ----------------------------------------------------
 
         seed_docs = selected[:2]
@@ -282,7 +315,10 @@ class UniversityRAG:
                 if neighbor_id < 0:
                     continue
 
-                key = (source, neighbor_id)
+                key = (
+                    source,
+                    neighbor_id
+                )
 
                 if key in seen:
                     continue
@@ -294,17 +330,19 @@ class UniversityRAG:
 
                 expanded_chunk = neighbor.copy()
 
-                # Ce voisin n'a pas de score FAISS propre
-                # dans cette recherche.
+                # Aucun nouveau score FAISS calculé
                 expanded_chunk["score"] = None
-                expanded_chunk["retrieval_type"] = "neighbor"
+
+                expanded_chunk[
+                    "retrieval_type"
+                ] = "neighbor"
 
                 selected.append(expanded_chunk)
 
                 seen.add(key)
 
         # ----------------------------------------------------
-        # 3. Réorganiser les passages
+        # C. Réorganiser le contexte
         # ----------------------------------------------------
 
         selected.sort(
@@ -320,7 +358,7 @@ class UniversityRAG:
         return selected
 
     # ========================================================
-    # 3. CONSTRUCTION DU CONTEXTE
+    # 4. CONSTRUCTION DU CONTEXTE
     # ========================================================
 
     @staticmethod
@@ -334,7 +372,7 @@ class UniversityRAG:
         )
 
     # ========================================================
-    # 4. CONSTRUCTION DU PROMPT RAG
+    # 5. CONSTRUCTION DU PROMPT RAG
     # ========================================================
 
     def build_prompt(self, question, docs):
@@ -342,8 +380,8 @@ class UniversityRAG:
         context = self.build_context(docs)
 
         return f"""
-Tu es un assistant universitaire spécialisé dans
-les démarches administratives et pédagogiques.
+Tu es un assistant universitaire spécialisé
+dans les démarches administratives et pédagogiques.
 
 Tu réponds aux questions des étudiants uniquement
 à partir des documents universitaires fournis.
@@ -402,7 +440,7 @@ RÉPONSE :
 """
 
     # ========================================================
-    # 5. GÉNÉRATION GEMINI
+    # 6. GÉNÉRATION GEMINI
     # ========================================================
 
     def generate_gemini(self, prompt):
@@ -425,12 +463,14 @@ RÉPONSE :
 
         start = time.perf_counter()
 
-        response = self.gemini_client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0,
-                max_output_tokens=MAX_OUTPUT_TOKENS
+        response = (
+            self.gemini_client.models.generate_content(
+                model=GEMINI_MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    temperature=0,
+                    max_output_tokens=MAX_OUTPUT_TOKENS
+                )
             )
         )
 
@@ -449,7 +489,7 @@ RÉPONSE :
         }
 
     # ========================================================
-    # 6. GÉNÉRATION QWEN AVEC OLLAMA
+    # 7. GÉNÉRATION QWEN / OLLAMA
     # ========================================================
 
     def generate_qwen(self, prompt):
@@ -482,7 +522,7 @@ RÉPONSE :
         }
 
     # ========================================================
-    # 7. SÉLECTION DU FOURNISSEUR LLM
+    # 8. SÉLECTION DU MODÈLE
     # ========================================================
 
     def generate(self, prompt):
@@ -491,11 +531,13 @@ RÉPONSE :
             return self.generate_qwen(prompt)
 
         if LLM_PROVIDER != "gemini":
+
             raise ValueError(
                 f"Fournisseur inconnu : {LLM_PROVIDER}"
             )
 
         try:
+
             return self.generate_gemini(prompt)
 
         except Exception as error:
@@ -515,7 +557,7 @@ RÉPONSE :
             return self.generate_qwen(prompt)
 
     # ========================================================
-    # 8. DÉTECTION DES REFUS
+    # 9. DÉTECTION DES REFUS
     # ========================================================
 
     def is_refusal(self, answer):
@@ -540,7 +582,7 @@ RÉPONSE :
         )
 
     # ========================================================
-    # 9. EXTRACTION DES SOURCES CITÉES
+    # 10. EXTRACTION DES SOURCES CITÉES
     # ========================================================
 
     @staticmethod
@@ -551,12 +593,11 @@ RÉPONSE :
     ):
 
         """
-        Vérifie que les identifiants cités dans
-        la réponse appartiennent au contexte.
+        Vérifie que les identifiants cités
+        appartiennent aux documents du contexte.
 
-        Le score conservé provient d'un véritable
-        résultat FAISS, et non d'un chunk voisin
-        ajouté artificiellement.
+        Cette vérification ne garantit pas
+        la fidélité sémantique des réponses.
         """
 
         verified_sources = []
@@ -598,7 +639,7 @@ RÉPONSE :
         return verified_sources
 
     # ========================================================
-    # 10. PIPELINE RAG COMPLET
+    # 11. PIPELINE RAG COMPLET
     # ========================================================
 
     def answer(self, question):
@@ -608,13 +649,37 @@ RÉPONSE :
         # ----------------------------------------------------
 
         if not isinstance(question, str):
+
             return self.refusal_response()
 
         if not question.strip():
+
             return self.refusal_response()
 
         # ----------------------------------------------------
-        # 2. Recherche FAISS
+        # 2. CONTRÔLER LE PÉRIMÈTRE MÉTIER
+        # ----------------------------------------------------
+
+        scope_result = self.validate_scope(question)
+
+        if not scope_result["allowed"]:
+
+            response = self.refusal_response()
+
+            response["answer"] = (
+                scope_result["reason"]
+            )
+
+            response["refusal_category"] = (
+                scope_result["category"]
+            )
+
+            # Refus immédiat :
+            # aucun appel à FAISS ni Gemini.
+            return response
+
+        # ----------------------------------------------------
+        # 3. RECHERCHE FAISS
         # ----------------------------------------------------
 
         start_retrieval = time.perf_counter()
@@ -626,27 +691,29 @@ RÉPONSE :
         )
 
         # ----------------------------------------------------
-        # 3. Vérifier le seuil de pertinence
+        # 4. VÉRIFIER LA PERTINENCE DU RETRIEVAL
         # ----------------------------------------------------
 
         if not docs:
+
             return self.refusal_response(
                 retrieval_s=retrieval_s
             )
 
         if docs[0]["score"] < MIN_SCORE:
+
             return self.refusal_response(
                 retrieval_s=retrieval_s
             )
 
         # ----------------------------------------------------
-        # 4. Expansion contextuelle
+        # 5. EXPANSION CONTEXTUELLE
         # ----------------------------------------------------
 
         selected_docs = self.expand_context(docs)
 
         # ----------------------------------------------------
-        # 5. Construire le prompt
+        # 6. CONSTRUIRE LE PROMPT
         # ----------------------------------------------------
 
         prompt = self.build_prompt(
@@ -655,17 +722,19 @@ RÉPONSE :
         )
 
         # ----------------------------------------------------
-        # 6. Générer la réponse
+        # 7. GÉNÉRER LA RÉPONSE
         # ----------------------------------------------------
 
         generation = self.generate(prompt)
 
         answer_text = generation["answer"]
+
         generation_s = generation["latency_s"]
+
         used_model = generation["model"]
 
         # ----------------------------------------------------
-        # 7. Détecter une information absente
+        # 8. DÉTECTER UN REFUS DOCUMENTAIRE
         # ----------------------------------------------------
 
         if self.is_refusal(answer_text):
@@ -677,7 +746,7 @@ RÉPONSE :
             )
 
         # ----------------------------------------------------
-        # 8. Vérifier les identifiants cités
+        # 9. EXTRAIRE LES SOURCES CITÉES
         # ----------------------------------------------------
 
         sources = self.extract_sources(
@@ -687,7 +756,7 @@ RÉPONSE :
         )
 
         # ----------------------------------------------------
-        # 9. Retourner le résultat
+        # 10. RETOURNER LA RÉPONSE
         # ----------------------------------------------------
 
         return {
