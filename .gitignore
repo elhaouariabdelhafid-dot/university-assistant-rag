@@ -33,3 +33,5 @@ artifacts/chunks.json
 *.log
 
 data/evaluation/rag_final_results.json
+
+data/evaluation/retrieval_eval_v1_results.json
