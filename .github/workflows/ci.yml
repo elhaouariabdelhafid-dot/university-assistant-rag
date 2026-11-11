@@ -32,6 +32,14 @@ jobs:
       - name: Test scope policy
         run: |
           python -m scripts.test_scope_policy
+           
+      - name: Test governance and prompt injection
+        run: |
+          python -m unittest discover \
+            -s tests \
+            -p "test_governance.py" \
+            -v
+
 
       - name: Test contradiction detection
         run: |

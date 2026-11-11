@@ -2,6 +2,8 @@
 import re
 import unicodedata
 
+from src.rag.injection_guard import detect_prompt_injection
+
 
 # ============================================================
 # 1. NORMALISATION DES QUESTIONS
@@ -177,6 +179,18 @@ def check_scope(question: str) -> dict:
     # --------------------------------------------------------
 
     normalized = normalize_question(question)
+
+    # Protection contre certaines prompt injections.
+    if detect_prompt_injection(normalized):
+        return {
+            "allowed": False,
+            "category": "prompt_injection",
+            "reason": (
+                "Demande refusée : tentative de "
+                "contournement des instructions."
+            ),
+        }
+
 
     # --------------------------------------------------------
     # C. Vérification des intentions sensibles
