@@ -1,17 +1,39 @@
 
+# ============================================
+# UNIVERSITY ASSISTANT RAG - MLOPS
+# Python 3.10
+# ============================================
+
+# Collecte et extraction documentaire
 beautifulsoup4>=4.12
 requests>=2.31
 PyMuPDF>=1.24
+
+# NLP et embeddings
 sentence-transformers>=3.0
+
+# Recherche vectorielle
 faiss-cpu>=1.8
 numpy>=1.26
 pandas>=2.2
+
+# Configuration
 python-dotenv>=1.0
 PyYAML>=6.0
+
+# LLM
+google-genai>=2.33,<3
 ollama>=0.3
+
+# API et interface web
 fastapi>=0.110
 uvicorn[standard]>=0.27
 streamlit>=1.32
+
+# MLOps
 mlflow>=2.12
+dvc>=3.67,<4
+
+# Tests et utilitaires
 pytest>=8.0
 tqdm>=4.66
