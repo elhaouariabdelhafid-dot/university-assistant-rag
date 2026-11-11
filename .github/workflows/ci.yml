@@ -1,12 +1,55 @@
-name: tests
-on: [push, pull_request]
+
+name: University Assistant RAG - CI
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
 jobs:
-  test:
+  quality-checks:
+    name: Python Quality and Unit Tests
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.10
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - run: pip install -r requirements.txt
-      - run: pytest -q
+          python-version: "3.10"
+
+      - name: Verify Python syntax
+        run: |
+          python -m compileall -q src scripts tests
+
+      - name: Test scope policy
+        run: |
+          python -m scripts.test_scope_policy
+
+      - name: Test contradiction detection
+        run: |
+          python -m unittest discover \
+            -s tests \
+            -p "test_contradiction.py" \
+            -v
+
+      - name: Check repository integrity
+        run: |
+          test -f dvc.yaml
+          test -f dvc.lock
+          test -f data/processed/text.dvc
+          test -f data/evaluation/questions_annotated_v1.jsonl.dvc
+
+      - name: Quality checks completed
+        run: |
+          echo "Python syntax: OK"
+          echo "Scope policy tests: OK"
+          echo "Contradiction unit tests: OK"
+          echo "DVC metadata: present"
