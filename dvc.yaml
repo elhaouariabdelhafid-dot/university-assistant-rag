@@ -1,0 +1,15 @@
+
+stages:
+  build_index:
+    desc: "Construire l'index FAISS à partir du corpus universitaire versionné"
+    cmd: python -m scripts.build_index
+
+    deps:
+      - data/processed/text
+      - scripts/build_index.py
+      - src/rag/index.py
+      - src/rag/chunking.py
+
+    outs:
+      - artifacts/university.faiss
+      - artifacts/chunks.json

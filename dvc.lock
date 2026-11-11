@@ -1,0 +1,31 @@
+schema: '2.0'
+stages:
+  build_index:
+    cmd: python -m scripts.build_index
+    deps:
+    - path: data/processed/text
+      hash: md5
+      md5: aca14b2df14e556ac346e69fa6ad7cde.dir
+      size: 15527
+      nfiles: 9
+    - path: scripts/build_index.py
+      hash: md5
+      md5: 4ec428658125c9e159dceb023557a0b5
+      size: 83
+    - path: src/rag/chunking.py
+      hash: md5
+      md5: 8c8682a25d76291f164341f4e7f661a9
+      size: 967
+    - path: src/rag/index.py
+      hash: md5
+      md5: 71cb79df86afad6f44bec3cda00c9b95
+      size: 1158
+    outs:
+    - path: artifacts/chunks.json
+      hash: md5
+      md5: 2e59e5ef85f6b39bcc6d3156d79c4960
+      size: 20029
+    - path: artifacts/university.faiss
+      hash: md5
+      md5: 214637805fb85cb6eccb047870ef00a5
+      size: 27693
