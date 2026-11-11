@@ -31,3 +31,5 @@ artifacts/chunks.json
 
 # Logs
 *.log
+
+data/evaluation/rag_final_results.json
